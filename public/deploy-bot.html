@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body>
+    <script>
+        // Extract the botId from the current URL
+const pathArray = window.location.pathname.split('/');
+const botId = pathArray[pathArray.length - 1];  // This will get the botId from the URL like /deploy-bot/1
+
+// Fetch the bot deployment data using the botId
+const fetchBotData = async () => {
+    try {
+        const response = await fetch(`/bot-deployment/${botId}`);  // Dynamically use botId in the endpoint
+        const data = await response.json();
+
+        if (data.envVars) {
+            envVarsSection.style.display = 'block';
+            envVarsContainer.innerHTML = '';
+
+            data.envVars.forEach(envVar => {
+                envVarsContainer.innerHTML += `
+                    <div>
+                        <label>${envVar.var_description} (${envVar.var_name})</label>
+                        <input type="text" name="envVars[${envVar.var_name}]" required=${envVar.is_required ? "true" : "false"}>
+                    </div>
+                `;
+            });
+        }
+    } catch (error) {
+        console.error('Error fetching bot deployment data:', error);
+    }
+};
+
+// Call the function to fetch and display data
+fetchBotData();
+
+    </script>
+</body>
+</html>

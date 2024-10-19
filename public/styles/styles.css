@@ -1,0 +1,32 @@
+.app-details-container {
+    max-width: 800px;
+    margin: 40px auto;
+    padding: 20px;
+    background-color: #f9f9f9;
+    border: 1px solid #ddd;
+    border-radius: 10px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+  }
+  
+  .app-details-container h1 {
+    font-size: 24px;
+    margin-bottom: 10px;
+  }
+  
+  .app-details-container p {
+    font-size: 18px;
+    margin-bottom: 20px;
+  }
+  
+  #delete-app-btn {
+    background-color: #4CAF50;
+    color: #fff;
+    padding: 10px 20px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+  }
+  
+  #delete-app-btn:hover {
+    background-color: #3e8e41;
+  }

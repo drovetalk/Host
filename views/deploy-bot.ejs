@@ -1,0 +1,236 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Deploy your WhatsApp bot on Bot.TalkDrove">
+    <title>Deploy <%= bot.name %> - Bot.TalkDrove</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary: #4361ee;
+            --primary-hover: #3a53d0;
+            --secondary: #e6f0ff;
+            --accent: #3f37c9;
+            --neutral: #333333;
+            --base-100: #ffffff;
+            --base-200: #f8fafc;
+            --base-300: #f1f5f9;
+            --success: #4ade80;
+            --error: #f87171;
+        }
+
+        [data-theme="dark"] {
+            --primary: #4361ee;
+            --primary-hover: #3a53d0;
+            --secondary: #1e293b;
+            --accent: #3f37c9;
+            --neutral: #f8fafc;
+            --base-100: #0f172a;
+            --base-200: #1e293b;
+            --base-300: #334155;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: var(--base-100);
+            color: var(--neutral);
+            min-height: 100vh;
+        }
+
+        .header {
+            background-color: var(--base-100);
+            border-bottom: 1px solid rgba(229, 231, 235, 0.2);
+            padding: 1rem 1.5rem;
+            position: sticky;
+            top: 0;
+            z-index: 50;
+        }
+
+        .header-content {
+            max-width: 1280px;
+            margin: 0 auto;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        h1 {
+            font-size: 1.5rem;
+            font-weight: 700;
+            background: linear-gradient(135deg, var(--primary), var(--accent));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin: 0;
+        }
+
+        .controls {
+            display: flex;
+            gap: 0.75rem;
+            align-items: center;
+        }
+
+        .btn {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            padding: 0.5rem 1rem;
+            border-radius: 0.5rem;
+            font-weight: 500;
+            transition: all 0.2s ease;
+            cursor: pointer;
+            border: none;
+            gap: 0.5rem;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, var(--primary), var(--accent));
+            color: white;
+        }
+
+        .btn-secondary {
+            background-color: var(--base-200);
+            color: var(--neutral);
+        }
+
+        .deploy-container {
+            max-width: 800px;
+            margin: 2rem auto;
+            padding: 0 1.5rem;
+        }
+
+        .deploy-form {
+            background-color: var(--base-100);
+            border-radius: 1rem;
+            padding: 1.5rem;
+            border: 1px solid rgba(229, 231, 235, 0.2);
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+        }
+
+        .form-section h3 {
+            font-size: 1.25rem;
+            font-weight: 600;
+            color: var(--neutral);
+            margin-bottom: 1rem;
+        }
+
+        .env-var-item {
+            margin-bottom: 1.5rem;
+        }
+
+        .env-var-item label {
+            display: block;
+            font-weight: 500;
+            margin-bottom: 0.5rem;
+            color: var(--neutral);
+        }
+
+        .env-var-item input {
+            width: 100%;
+            padding: 0.75rem;
+            border-radius: 0.5rem;
+            border: 1px solid var(--base-300);
+            background-color: var(--base-200);
+            color: var(--neutral);
+            transition: all 0.2s ease;
+        }
+
+        .deploy-btn {
+            width: 100%;
+            padding: 1rem;
+            font-size: 1.125rem;
+            margin-top: 1rem;
+        }
+
+        .text-error {
+            color: var(--error);
+        }
+
+        @media (max-width: 768px) {
+            .controls {
+                gap: 0.5rem;
+            }
+
+            .btn span {
+                display: none;
+            }
+
+            .btn {
+                padding: 0.5rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <header class="header">
+        <div class="header-content">
+            <h1>BOT.TalkDrove</h1>
+            <nav class="controls">
+                <button class="btn btn-secondary" onclick="window.location.href='/dashboard'">
+                    <i class="fas fa-arrow-left"></i>
+                    <span>Back</span>
+                </button>
+                <button id="themeToggle" class="btn btn-secondary">
+                    <i class="fas fa-adjust"></i>
+                </button>
+            </nav>
+        </div>
+    </header>
+
+    <main class="deploy-container">
+        <form id="deployForm" class="deploy-form" action="/deploy" method="POST">
+            <input type="hidden" name="botId" value="<%= bot.id %>">
+
+            <div class="form-section">
+                <h3>Deploy Bot: <%= bot.name %></h3>
+                <div id="envVarsContainer">
+                    <% bot.envVars.forEach(function(envVar) { %>
+                        <div class="env-var-item">
+                            <label>
+                                <%= envVar.var_description %>
+                                <span>(<%= envVar.var_name %>)</span>
+                                <% if(envVar.is_required) { %>
+                                    <span class="text-error">*</span>
+                                <% } %>
+                            </label>
+                            <input 
+                                type="text" 
+                                name="envVars[<%= envVar.var_name %>]" 
+                                placeholder="Enter <%= envVar.var_name %>"
+                                <%= envVar.is_required ? 'required' : '' %>
+                            >
+                        </div>
+                    <% }); %>
+                </div>
+            </div>
+
+            <button type="submit" class="btn btn-primary deploy-btn">
+                <i class="fas fa-rocket"></i>
+                <span>Deploy Bot</span>
+            </button>
+        </form>
+    </main>
+
+    <script>
+        // Theme toggle functionality
+        const themeToggle = document.getElementById('themeToggle');
+        const savedTheme = localStorage.getItem('theme') || 'light';
+        document.documentElement.setAttribute('data-theme', savedTheme);
+
+        themeToggle.addEventListener('click', () => {
+            const html = document.documentElement;
+            const currentTheme = html.getAttribute('data-theme');
+            const newTheme = currentTheme === 'light' ? 'dark' : 'light';
+            html.setAttribute('data-theme', newTheme);
+            localStorage.setItem('theme', newTheme);
+        });
+    </script>
+</body>
+</html>

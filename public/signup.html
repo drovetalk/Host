@@ -1,0 +1,164 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Bot.TalkDrove - Register</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <meta name="description" content="Register for Bot.TalkDrove and host your WhatsApp bot for free!">
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/intl-tel-input@18.1.1/build/js/intlTelInput.min.js"></script>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/intl-tel-input@18.1.1/build/css/intlTelInput.css">
+    <style>
+        .verification-input {
+            border: 1px solid #2D3748;
+        }
+    </style>
+</head>
+<body class="bg-gradient-to-br from-blue-400 to-purple-500 min-h-screen flex items-center justify-center font-['Roboto']">
+    <div class="bg-white p-10 rounded-3xl shadow-2xl w-96 max-w-full">
+        <h1 class="text-4xl font-bold mb-8 text-center text-gray-800">Join Bot.TalkDrove</h1>
+        <p class="text-center text-gray-600 mb-8">Create your account and start hosting your WhatsApp bot for free!</p>
+        <form id="registerForm" class="space-y-6">
+            <div>
+                <label for="phoneNumber" class="block text-sm font-medium text-gray-700 mb-1">WhatsApp Number</label>
+                <input type="tel" id="phoneNumber" name="phoneNumber" required class="block w-full px-4 py-3 rounded-full border-gray-300 shadow-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
+            </div>
+            <button type="submit" id="submitButton" class="w-full py-3 px-4 border border-transparent rounded-full shadow-sm text-sm font-medium text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 transition duration-150 ease-in-out">
+                Get Started
+            </button>
+        </form>
+        <p class="text-sm mt-6 text-center">Already have an account? <a href="/login" class="text-blue-600 font-medium">Log in here</a></p>
+
+        <div id="verificationForm" class="hidden space-y-6 mt-8">
+            <h2 class="text-2xl font-semibold text-center text-gray-800 mb-4">Verify Your Number</h2>
+            <p class="text-center text-gray-600 mb-4">Enter the 6-digit code we sent to your WhatsApp</p>
+            <div class="flex justify-center space-x-2">
+                <input type="text" maxlength="1" class="verification-input w-12 h-12 text-center text-xl border-gray-300 rounded-lg shadow-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
+                <input type="text" maxlength="1" class="verification-input w-12 h-12 text-center text-xl border-gray-300 rounded-lg shadow-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
+                <input type="text" maxlength="1" class="verification-input w-12 h-12 text-center text-xl border-gray-300 rounded-lg shadow-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
+                <input type="text" maxlength="1" class="verification-input w-12 h-12 text-center text-xl border-gray-300 rounded-lg shadow-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
+                <input type="text" maxlength="1" class="verification-input w-12 h-12 text-center text-xl border-gray-300 rounded-lg shadow-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
+                <input type="text" maxlength="1" class="verification-input w-12 h-12 text-center text-xl border-gray-300 rounded-lg shadow-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
+            </div>
+            <button id="verifyButton" class="w-full py-3 px-4 border border-transparent rounded-full shadow-sm text-sm font-medium text-white bg-green-600 hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500 transition duration-150 ease-in-out">
+                Verify & Create Account
+            </button>
+        </div>
+    </div>
+
+<script>
+    const registerForm = document.getElementById('registerForm');
+    const verificationForm = document.getElementById('verificationForm');
+    const verifyButton = document.getElementById('verifyButton');
+    const phoneNumberInput = document.getElementById('phoneNumber');
+    const verificationInputs = document.querySelectorAll('.verification-input');
+    const submitButton = document.getElementById('submitButton');
+
+    const phoneInput = window.intlTelInput(phoneNumberInput, {
+        utilsScript: "https://cdnjs.cloudflare.com/ajax/libs/intl-tel-input/17.0.8/js/utils.js",
+        preferredCountries: ["pk", "ng", "in", "za", "ke", "tz", "nl"],
+        separateDialCode: true,
+    });
+
+    registerForm.addEventListener('submit', async (e) => {
+        e.preventDefault();
+        const phoneNumber = phoneInput.getNumber().replace(/\s+/g, '').replace('+', '');
+
+        try {
+            const response = await fetch('/check-phone', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ phoneNumber })
+            });
+            const data = await response.json();
+            
+            if (response.ok) {
+                if (data.exists) {
+                    alert('User already exists! Please login instead.');
+                } else {
+                    // Proceed with registration
+                    await sendVerificationCode(phoneNumber, true);
+                }
+            } else {
+                alert(data.error);
+            }
+        } catch (error) {
+            console.error('Error:', error);
+            alert('An error occurred. Please try again.');
+        }
+    });
+
+    async function sendVerificationCode(phoneNumber, isRegistering) {
+        try {
+            const response = await fetch('/send-code', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ phoneNumber, isRegistering })
+            });
+            const data = await response.json();
+            
+            if (response.ok) {
+                alert(data.message);
+                registerForm.style.display = 'none';
+                verificationForm.style.display = 'block';
+                setupVerificationInputs();
+            } else {
+                alert(data.error);
+            }
+        } catch (error) {
+            console.error('Error:', error);
+            alert('An error occurred while sending the verification code.');
+        }
+    }
+
+    function setupVerificationInputs() {
+        verificationInputs.forEach((input, index) => {
+            input.addEventListener('input', (e) => {
+                if (e.target.value.length === 1) {
+                    if (index < verificationInputs.length - 1) {
+                        verificationInputs[index + 1].focus();
+                    } else {
+                        verifyButton.click();
+                    }
+                }
+            });
+
+            input.addEventListener('keydown', (e) => {
+                if (e.key === 'Backspace' && e.target.value.length === 0 && index > 0) {
+                    verificationInputs[index - 1].focus();
+                }
+            });
+        });
+    }
+
+    verifyButton.addEventListener('click', async () => {
+        const phoneNumber = phoneInput.getNumber().replace(/\s+/g, '').replace('+', '');
+        let code = '';
+        verificationInputs.forEach((input) => {
+            code += input.value;
+        });
+
+        try {
+            const response = await fetch('/verify', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ phoneNumber, code, isRegistering: true })
+            });
+            const data = await response.json();
+
+            if (response.ok) {
+                alert(data.message);
+                window.location.href = '/';
+            } else {
+                alert(data.error);
+                verificationInputs.forEach(input => input.value = '');
+                verificationInputs[0].focus();
+            }
+        } catch (error) {
+            console.error('Error:', error);
+            alert('An error occurred. Please try again.');
+        }
+    });
+</script>
+</body> </html>

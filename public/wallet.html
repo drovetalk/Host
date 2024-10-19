@@ -1,0 +1,369 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>BOT.TalkDrove - Wallet</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet">
+    <style>
+        :root {
+            --primary: #4361ee;
+            --primary-hover: #3a53d0;
+            --secondary: #e6f0ff;
+            --accent: #3f37c9;
+            --neutral: #333333;
+            --base-100: #ffffff;
+            --base-200: #f8fafc;
+            --base-300: #f1f5f9;
+            --base-hamza: #4895ef;
+            --loader: #f8fafc;
+            --success: #4ade80;
+            --error: #f87171;
+            --loaderText: #1e293b;
+        }
+
+        [data-theme="dark"] {
+            --primary: #4361ee;
+            --primary-hover: #3a53d0;
+            --secondary: #1e293b;
+            --accent: #3f37c9;
+            --neutral: #f8fafc;
+            --base-100: #0f172a;
+            --base-200: #1e293b;
+            --base-300: #334155;
+            --base-hamza: #1e293b;
+            --loader: #0f172a;
+            --loaderText: #f8fafc;
+        }
+
+        body {
+            font-family: 'Inter', 'Segoe UI', system-ui, sans-serif;
+            background: linear-gradient(135deg, var(--base-200), var(--base-300));
+            color: var(--neutral);
+            margin: 0;
+            min-height: 100vh;
+        }
+
+        .header {
+            background-color: var(--base-100);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border-bottom: 1px solid rgba(229, 231, 235, 0.2);
+            padding: 1rem 1.5rem;
+            position: sticky;
+            top: 0;
+            z-index: 50;
+        }
+
+        .header-content {
+            max-width: 1280px;
+            margin: 0 auto;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .header h1 a {
+            text-decoration: none;
+            background: linear-gradient(135deg, var(--primary), var(--accent));
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+        }
+
+        h1 {
+            font-size: 1.5rem;
+            font-weight: 700;
+            margin: 0;
+        }
+
+        h2 {
+            font-size: 1.5rem;
+            font-weight: 600;
+            margin-bottom: 1.5rem;
+            color: var(--neutral);
+            text-align: center;
+        }
+
+        h3 {
+            font-size: 1.25rem;
+            font-weight: 600;
+            margin: 1.5rem 0 1rem;
+            color: var(--neutral);
+        }
+
+        .main {
+            max-width: 1280px;
+            margin: 2rem auto;
+            padding: 0 1.5rem;
+        }
+
+        .wallet-grid {
+            display: grid;
+            grid-template-columns: repeat(12, 1fr);
+            gap: 1.5rem;
+            margin-bottom: 2rem;
+        }
+
+        #walletInfo {
+            grid-column: 4 / 10;
+            background-color: var(--base-100);
+            border-radius: 1rem;
+            padding: 2rem;
+            border: 1px solid rgba(229, 231, 235, 0.2);
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+            text-align: center;
+        }
+
+        .controls {
+            display: flex;
+            gap: 0.75rem;
+            align-items: center;
+        }
+
+        .btn {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            padding: 0.75rem 1.5rem;
+            border-radius: 0.5rem;
+            font-weight: 500;
+            transition: all 0.2s ease;
+            cursor: pointer;
+            border: none;
+            gap: 0.5rem;
+            background: linear-gradient(135deg, var(--primary), var(--accent));
+            color: white;
+            font-size: 0.875rem;
+        }
+
+        .btn:hover {
+            transform: translateY(-1px);
+            background: var(--primary-hover);
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+        }
+
+        #coinBalance {
+            font-size: 3rem;
+            font-weight: 700;
+            color: var(--primary);
+            margin: 1rem 0;
+            background: linear-gradient(135deg, var(--primary), var(--accent));
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+        }
+
+        .balance-label {
+            font-size: 1.25rem;
+            color: var(--neutral);
+            opacity: 0.8;
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1.5rem;
+            margin-top: 1.5rem;
+            padding-top: 1.5rem;
+            border-top: 1px solid var(--base-300);
+        }
+
+        .stat-item {
+            text-align: center;
+        }
+
+        .stat-label {
+            font-size: 0.875rem;
+            color: var(--neutral);
+            opacity: 0.8;
+            margin-bottom: 0.5rem;
+        }
+
+        .stat-value {
+            font-size: 1.25rem;
+            font-weight: 600;
+            color: var(--neutral);
+        }
+
+        .transactions-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 1.5rem;
+        }
+
+        input {
+            width: 100%;
+            padding: 0.75rem 1rem;
+            border-radius: 0.5rem;
+            border: 1px solid var(--base-300);
+            background-color: var(--base-100);
+            color: var(--neutral);
+            margin-bottom: 1rem;
+            font-family: inherit;
+            transition: all 0.2s ease;
+        }
+
+        input:focus {
+            outline: none;
+            border-color: var(--primary);
+            box-shadow: 0 0 0 2px rgba(67, 97, 238, 0.1);
+        }
+
+        #sendCoins, #depositCoins {
+            background-color: var(--base-100);
+            border-radius: 1rem;
+            padding: 1.5rem;
+            border: 1px solid rgba(229, 231, 235, 0.2);
+            margin-bottom: 1.5rem;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+        }
+
+        #transactionHistory {
+            grid-column: 1 / -1;
+            background-color: var(--base-100);
+            border-radius: 1rem;
+            padding: 1.5rem;
+            border: 1px solid rgba(229, 231, 235, 0.2);
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+        }
+
+        #transactionList {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+        }
+
+        .transaction-item {
+            padding: 1rem;
+            border-bottom: 1px solid var(--base-300);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .transaction-item:last-child {
+            border-bottom: none;
+        }
+
+        @media (max-width: 1024px) {
+            .wallet-grid {
+                grid-template-columns: repeat(8, 1fr);
+            }
+
+            #walletInfo {
+                grid-column: 2 / 8;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .wallet-grid {
+                grid-template-columns: 1fr;
+            }
+
+            #walletInfo {
+                grid-column: 1;
+            }
+
+            .transactions-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .controls {
+                gap: 0.5rem;
+            }
+
+            .btn {
+                padding: 0.5rem;
+            }
+
+            .btn span {
+                display: none;
+            }
+
+            #coinBalance {
+                font-size: 2.5rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <header class="header">
+        <div class="header-content">
+            <h1><a href="/">BOT.TalkDrove</a></h1>
+            <nav class="controls">
+                <button id="dashboardBtn" class="btn" onclick="window.location.href='/'">
+                    <i class="fas fa-tachometer-alt"></i>
+                  
+                </button>
+                <button id="themeToggle" class="btn" onclick="toggleTheme()">
+                    <i class="fas fa-adjust"></i>
+               
+                </button>
+                <button id="settingsBtn" class="btn" onclick="openSettings()">
+                    <i class="fas fa-cog"></i>
+                    
+                </button>
+                <button id="logoutBtn" class="btn" onclick="logout()">
+                    <i class="fas fa-sign-out-alt"></i>
+                 
+                </button>
+            </nav>
+        </div>
+    </header>
+
+    <main class="main">
+        <h2>Your Wallet</h2>
+        <div class="wallet-grid">
+            <div id="walletInfo">
+                <div class="balance-label">Current Balance</div>
+                <div id="coinBalance">Loading...</div>
+                <div class="stats-grid">
+                    <div class="stat-item">
+                        <div class="stat-label">Total Deployments</div>
+                        <div class="stat-value" id="totalDeployments">Loading...</div>
+                    </div>
+                    <div class="stat-item">
+                        <div class="stat-label">Total Spent</div>
+                        <div class="stat-value" id="totalSpent">Loading...</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div id="sendCoins">
+            <h3>Send Coins</h3>
+            <input type="text" id="recipientPhone" placeholder="Recipient's Phone Number" required>
+            <input type="number" id="sendAmount" placeholder="Amount" required min="1">
+            <button id="sendCoinsBtn" class="btn">Send Coins</button>
+        </div>
+
+
+
+            <div id="transactionHistory">
+                <h3>Recent Transactions</h3>
+                <ul id="transactionList"></ul>
+            </div>
+        </div>
+    </main>
+
+    <script>
+        // Theme toggle functionality
+        function toggleTheme() {
+            const html = document.documentElement;
+            const currentTheme = html.getAttribute('data-theme');
+            const newTheme = currentTheme === 'light' ? 'dark' : 'light';
+            html.setAttribute('data-theme', newTheme);
+            localStorage.setItem('theme', newTheme);
+        }
+
+        // Check for saved theme preference
+        const savedTheme = localStorage.getItem('theme');
+        if (savedTheme) {
+            document.documentElement.setAttribute('data-theme', savedTheme);
+        }
+</script>
+    <script src="./js/main.js"></script>
+    <script src="./js/wallet.js"></script>
+</body>
+</html>

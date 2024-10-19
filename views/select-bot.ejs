@@ -1,0 +1,375 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Select a WhatsApp bot to deploy on Bot.TalkDrove">
+    <title>Select Bot - Bot.TalkDrove</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary: #4361ee;
+            --primary-hover: #3a53d0;
+            --secondary: #e6f0ff;
+            --accent: #3f37c9;
+            --neutral: #333333;
+            --base-100: #ffffff;
+            --base-200: #f8fafc;
+            --base-300: #f1f5f9;
+            --base-hamza: #4895ef;
+            --loader: #f8fafc;
+            --success: #4ade80;
+            --error: #f87171;
+            --loaderText: #1e293b;
+        }
+
+        [data-theme="dark"] {
+            --primary: #4361ee;
+            --primary-hover: #3a53d0;
+            --secondary: #1e293b;
+            --accent: #3f37c9;
+            --neutral: #f8fafc;
+            --base-100: #0f172a;
+            --base-200: #1e293b;
+            --base-300: #334155;
+            --base-hamza: #1e293b;
+            --loader: #0f172a;
+            --loaderText: #f8fafc;
+        }
+
+        body {
+            font-family: 'Inter', 'Segoe UI', system-ui, sans-serif;
+            background: linear-gradient(135deg, var(--base-200), var(--base-300));
+            color: var(--neutral);
+            margin: 0;
+            min-height: 100vh;
+            transition: background-color 0.3s ease;
+        }
+
+        .header {
+            background-color: var(--base-100);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border-bottom: 1px solid rgba(229, 231, 235, 0.2);
+            padding: 1rem 1.5rem;
+            position: sticky;
+            top: 0;
+            z-index: 50;
+        }
+
+        .header-content {
+            max-width: 1280px;
+            margin: 0 auto;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        h1 {
+            font-size: 1.5rem;
+            font-weight: 700;
+            background: linear-gradient(135deg, var(--primary), var(--accent));
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+            margin: 0;
+        }
+
+        .controls {
+            display: flex;
+            gap: 0.75rem;
+            align-items: center;
+        }
+
+        .btn {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            padding: 0.5rem 1rem;
+            border-radius: 0.5rem;
+            font-weight: 500;
+            transition: all 0.2s ease;
+            cursor: pointer;
+            border: none;
+            gap: 0.5rem;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, var(--primary), var(--accent));
+            color: white;
+        }
+
+        .btn-secondary {
+            background-color: var(--base-200);
+            color: var(--neutral);
+        }
+
+        .btn:hover {
+            transform: translateY(-1px);
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+        }
+
+        .search-container {
+            max-width: 1280px;
+            margin: 2rem auto 1rem;
+            padding: 0 1.5rem;
+        }
+
+        .search-box {
+            display: flex;
+            gap: 0.5rem;
+            background-color: var(--base-100);
+            border: 1px solid rgba(229, 231, 235, 0.2);
+            border-radius: 0.5rem;
+            padding: 0.75rem 1rem;
+            width: 100%;
+            max-width: 400px;
+            margin: 0 auto;
+        }
+
+        .search-box input {
+            flex: 1;
+            border: none;
+            background: none;
+            outline: none;
+            color: var(--neutral);
+            font-size: 1rem;
+            font-family: 'Inter', sans-serif;
+        }
+
+        .search-box input::placeholder {
+            color: var(--neutral);
+            opacity: 0.5;
+        }
+
+        .search-icon {
+            color: var(--neutral);
+            opacity: 0.5;
+        }
+
+        .bot-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+            gap: 1.5rem;
+            padding: 1.5rem;
+            max-width: 1280px;
+            margin: 0 auto;
+        }
+
+        .bot-card {
+            background-color: var(--base-100);
+            border-radius: 1rem;
+            padding: 1.5rem;
+            border: 1px solid rgba(229, 231, 235, 0.2);
+            transition: all 0.2s ease;
+            cursor: pointer;
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+        }
+
+        .bot-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+        }
+
+        .bot-card.selected {
+            border: 2px solid var(--primary);
+            background-color: var(--secondary);
+        }
+
+        .bot-card.hidden {
+            display: none;
+        }
+
+        .bot-name {
+            font-size: 1.25rem;
+            font-weight: 600;
+            color: var(--neutral);
+            margin: 0;
+        }
+
+        .bot-cost {
+            font-size: 0.875rem;
+            color: var(--neutral);
+            opacity: 0.8;
+        }
+
+        .bot-icon {
+            font-size: 2rem;
+            color: var(--primary);
+            margin-bottom: 0.5rem;
+        }
+
+        .form-container {
+            max-width: 1280px;
+            margin: 2rem auto;
+            padding: 0 1.5rem;
+            text-align: center;
+        }
+
+        .hidden-select {
+            display: none;
+        }
+
+        .no-results {
+            text-align: center;
+            color: var(--neutral);
+            padding: 2rem;
+            grid-column: 1 / -1;
+            display: none;
+        }
+
+        .theme-toggle {
+            background: none;
+            border: none;
+            color: var(--neutral);
+            font-size: 1.5rem;
+            cursor: pointer;
+            transition: color 0.3s ease;
+        }
+
+        .theme-toggle:hover {
+            color: var(--primary);
+        }
+
+        @media (max-width: 768px) {
+            .bot-grid {
+                grid-template-columns: 1fr;
+                padding: 1rem;
+            }
+
+            .search-container {
+                padding: 0 1rem;
+                margin: 1rem auto;
+            }
+
+            .controls {
+                gap: 0.5rem;
+            }
+
+            .btn {
+                padding: 0.5rem;
+            }
+
+            .btn span {
+                display: none;
+            }
+        }
+    </style>
+</head>
+<body>
+    <header class="header">
+        <div class="header-content">
+            <h1>BOT.TalkDrove</h1>
+            <nav class="controls">
+                <button class="btn btn-secondary" onclick="window.location.href='/dashboard'">
+                    <i class="fas fa-arrow-left"></i>
+                    <span>Back</span>
+                </button>
+                <button id="themeToggle" class="theme-toggle" onclick="toggleTheme()">
+                    <i class="fas fa-moon"></i>
+                </button>
+            </nav>
+        </div>
+    </header>
+
+    <main class="main">
+        <div class="search-container">
+            <div class="search-box">
+                <i class="fas fa-search search-icon"></i>
+                <input 
+                    type="text" 
+                    id="searchInput" 
+                    placeholder="Search bots by name..."
+                    oninput="filterBots()"
+                >
+            </div>
+        </div>
+
+        <form id="selectBotForm" action="/prepare-deployment" method="POST">
+            <select id="botSelect" name="botId" required class="hidden-select">
+                <option value="">Select a bot</option>
+                <% bots.forEach(function(bot) { %>
+                    <option value="<%= bot.id %>"><%= bot.name %></option>
+                <% }); %>
+            </select>
+
+            <div class="bot-grid">
+                <% bots.forEach(function(bot) { %>
+                    <div class="bot-card" data-bot-id="<%= bot.id %>" data-bot-name="<%= bot.name.toLowerCase() %>" onclick="selectBot(this, '<%= bot.id %>')">
+                        <i class="fas fa-robot bot-icon"></i>
+                        <div class="bot-name"><%= bot.name %></div>
+                        <div class="bot-cost">
+                            <i class="fas fa-coins"></i>
+                            Cost: <%= bot.deployment_cost %> coins
+                        </div>
+                    </div>
+                <% }); %>
+                <div class="no-results">No bots found matching your search.</div>
+            </div>
+
+            <div class="form-container">
+                <button type="submit" class="btn btn-primary">
+                    <i class="fas fa-check"></i>
+                    <span>Next</span>
+                </button>
+            </div>
+        </form>
+    </main>
+
+    <script>
+        function selectBot(card, botId) {
+            document.querySelectorAll('.bot-card').forEach(c => c.classList.remove('selected'));
+            card.classList.add('selected');
+            document.getElementById('botSelect').value = botId;
+        }
+
+        function filterBots() {
+            const searchValue = document.getElementById('searchInput').value.toLowerCase();
+            const botCards = document.querySelectorAll('.bot-card');
+            let hasResults = false;
+
+            botCards.forEach(card => {
+                const botName = card.getAttribute('data-bot-name');
+                if (botName.includes(searchValue)) {
+                    card.classList.remove('hidden');
+                    hasResults = true;
+                } else {
+                    card.classList.add('hidden');
+                }
+            });
+
+            const noResults = document.querySelector('.no-results');
+            noResults.style.display = hasResults ? 'none' : 'block';
+        }
+
+        function toggleTheme() {
+            const html = document.documentElement;
+            const themeToggle = document.getElementById('themeToggle');
+            const currentTheme = html.getAttribute('data-theme');
+            const newTheme = currentTheme === 'light' ? 'dark' : 'light';
+            
+            html.setAttribute('data-theme', newTheme);
+            localStorage.setItem('theme', newTheme);
+            
+            themeToggle.innerHTML = newTheme === 'light' 
+                ? '<i class="fas fa-moon"></i>' 
+                : '<i class="fas fa-sun"></i>';
+        }
+
+        // Set initial theme based on user preference or system setting
+        (function() {
+            const savedTheme = localStorage.getItem('theme');
+            const prefersDark = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches;
+            const defaultTheme = savedTheme || (prefersDark ? 'dark' : 'light');
+            
+            document.documentElement.setAttribute('data-theme', defaultTheme);
+            document.getElementById('themeToggle').innerHTML = defaultTheme === 'light' 
+                ? '<i class="fas fa-moon"></i>' 
+                : '<i class="fas fa-sun"></i>';
+        })();
+    </script>
+</body>
+</html>

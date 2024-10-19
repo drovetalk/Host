@@ -1,0 +1,32 @@
+{
+    "name": "whatsapp-verification-system",
+    "version": "1.0.0",
+    "description": "A user verification system via WhatsApp using Baileys and Express.js",
+    "main": "index.js",
+    "scripts": {
+        "start": "node index.js",
+        "dev": "nodemon index.js",
+        "type": "module"
+    },
+    "author": "Your Name",
+    "license": "MIT",
+    "dependencies": {
+        "@octokit/rest": "^21.0.2",
+        "@whiskeysockets/baileys": "latest",
+        "axios": "^1.7.7",
+        "bcrypt": "^5.1.1",
+        "bcryptjs": "^2.4.3",
+        "body-parser": "^1.20.3",
+        "cookie-parser": "^1.4.6",
+        "dotenv": "^16.4.5",
+        "ejs": "^3.1.10",
+        "express": "^4.21.1",
+        "express-session": "^1.18.0",
+        "jsonwebtoken": "^9.0.2",
+        "mysql2": "^3.11.3",
+        "node-cron": "^3.0.3"
+    },
+    "devDependencies": {
+        "nodemon": "^2.0.22"
+    }
+}
